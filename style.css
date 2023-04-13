@@ -21,11 +21,8 @@ h1.center {
     list-style: none;
     padding: 0;
     margin: 0;
-}
-
-li {
-    padding: 10px;
-    border-bottom: 1px solid #ccc;
+    display: flex;
+    flex-wrap: wrap;
 }
 
 .form-group {
@@ -71,9 +68,49 @@ li {
 }
 
 #task-list li {
-    display: flex;
-    justify-content: space-between;
+    justify-content: space-evenly;
     align-items: center;
+    border-radius: 20px;
+    margin: 20px;
+    background-color: rgb(202, 218, 187);
+    width: 400px;
+    height: 250px;
+    padding: 10px;
+    -webkit-border-radius: 20px;
+    -moz-border-radius: 20px;
+    -ms-border-radius: 20px;
+    -o-border-radius: 20px;
+    position: relative;
+}
+
+#task-list li .card {
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 20px;
+
+}
+
+#task-list li .card span p.wrap {
+    word-break: break-all;
+}
+
+#task-list li .card span h1.wrap {
+    word-break: break-all;
+}
+
+#task-list li .date {
+    position: absolute;
+    left: 10%;
+}
+
+#task-list li .wrap-button {
+    bottom: 10%;
+    right: 6%;
+    position: absolute;
+    margin-top: 20px;
 }
 
 button#clear {
@@ -113,4 +150,30 @@ button#clear:hover {
 .btn-delete:hover {
     background-color: #b9573d;
     cursor: pointer;
+}
+
+#form-wrap {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+
+#form-wrap input#swal-input1 {
+    margin-bottom: 20px;
+}
+
+@media only screen and (max-width: 600px) {
+
+    #task-list li .card h1 {
+        font-size: 24px;
+    }
+
+    #task-list li .date {
+        left: 12%;
+    }
+
+    #task-list li .wrap-button {
+        bottom: 5%;
+    }
 }

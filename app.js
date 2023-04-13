@@ -8,14 +8,20 @@ function renderTasks() {
   taskList.innerHTML = "";
 
   tasks.forEach(function (task, index) {
+    let datetime = new Date().toLocaleString();
+
     const li = document.createElement("li");
     li.innerHTML = `
-            <span>${task.title}</span>
-            <span>${task.desc}</span>
+    <div class="card">
+            <span><h1 class="wrap">Title: ${task.title}</h1></span>
+            <span><p class="wrap">Desc: ${task.desc}</p></span>
+    </div>
+            <p class="date">${datetime}</p>
             <div class="wrap-button">
                 <button class="btn-update" data-index="${index}">Update</button>
                 <button class="btn-delete" data-index="${index}">Delete</button>
             </div>
+    
         `;
     taskList.appendChild(li);
   });
@@ -34,9 +40,22 @@ form.addEventListener("submit", function (e) {
 taskList.addEventListener("click", function (e) {
   if (e.target.classList.contains("btn-delete")) {
     const index = e.target.getAttribute("data-index");
-    tasks.splice(index, 1);
-    localStorage.setItem("tasks", JSON.stringify(tasks));
-    renderTasks();
+    Swal.fire({
+      title: "Apakah yakin untuk menghapus task ini?",
+      text: "Kamu tidak bisa mengubah perintah!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Ya, hapus task ini!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        tasks.splice(index, 1);
+        localStorage.setItem("tasks", JSON.stringify(tasks));
+        renderTasks();
+        Swal.fire("Terhapus!", "Task mu telah terhapus.", "success");
+      }
+    });
   } else if (e.target.classList.contains("btn-update")) {
     const index = e.target.getAttribute("data-index");
     const task = tasks[index];
@@ -74,9 +93,22 @@ taskList.addEventListener("click", function (e) {
 });
 
 function clearTasks() {
-  tasks = [];
-  localStorage.removeItem("tasks");
-  renderTasks();
+  Swal.fire({
+    title: "Apakah yakin untuk menghapus semua task?",
+    text: "Kamu tidak bisa mengubah perintah!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Ya, hapus task ini!",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      tasks = [];
+      localStorage.removeItem("tasks");
+      renderTasks();
+      Swal.fire("Terhapus!", "Semua Task mu telah terhapus.", "success");
+    }
+  });
 }
 
 function finishTask() {
