@@ -163,6 +163,47 @@ button#clear:hover {
     margin-bottom: 20px;
 }
 
+.upper {
+    width: 100%;
+    transition: 0.2s all ease-in;
+    display: none;
+    -webkit-transition: 0.2s all ease-in;
+    -moz-transition: 0.2s all ease-in;
+    -ms-transition: 0.2s all ease-in;
+    -o-transition: 0.2s all ease-in;
+}
+
+.upper p {
+    cursor: pointer;
+    position: fixed;
+    box-shadow: 3px 2px 5px rgba(54, 52, 52, 0.433);
+    font-size: 20px;
+    bottom: 10%;
+    right: 10%;
+    background-color: rgb(145, 94, 94);
+    padding: 20px;
+    border-radius: 50%;
+    color: #fff;
+    transition: 0.2s all ease;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    -ms-border-radius: 50%;
+    -o-border-radius: 50%;
+    -webkit-transition: 0.2s all ease;
+    -moz-transition: 0.2s all ease;
+    -ms-transition: 0.2s all ease;
+    -o-transition: 0.2s all ease;
+}
+
+.upper img {
+    width: 20px;
+    height: 20px;
+}
+
+.upper p:hover {
+    background-color: rgb(215, 148, 148);
+}
+
 @media only screen and (max-width: 600px) {
 
     #task-list li .card h1 {

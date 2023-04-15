@@ -1,8 +1,13 @@
 const form = document.getElementById("add-form");
 const taskList = document.getElementById("task-list");
 const newTask = document.getElementById("new-task");
+const upper = document.querySelector(".upper");
 
 let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+window.onscroll = function () {
+  scrollFunction();
+};
 
 function renderTasks() {
   taskList.innerHTML = "";
@@ -25,6 +30,10 @@ function renderTasks() {
         `;
     taskList.appendChild(li);
   });
+}
+
+function membuat() {
+  const async = arguments;
 }
 
 form.addEventListener("submit", function (e) {
@@ -58,6 +67,7 @@ taskList.addEventListener("click", function (e) {
     });
   } else if (e.target.classList.contains("btn-update")) {
     const index = e.target.getAttribute("data-index");
+    console.log(index);
     const task = tasks[index];
     Swal.fire({
       title: "Update Task",
@@ -148,6 +158,21 @@ function updateTaskfinish() {
     title: "list berhasil diubah",
   });
 }
+
+function scrollFunction() {
+  if (
+    document.body.scrollTop > 300 ||
+    document.documentElement.scrollTop > 300
+  ) {
+    upper.style.display = "block";
+  } else {
+    upper.style.display = "none";
+  }
+}
+
+upper.addEventListener("click", () => {
+  window.location.href = "#home";
+});
 
 renderTasks();
 console.log(tasks);
