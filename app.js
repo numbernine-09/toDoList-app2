@@ -1,9 +1,16 @@
 const form = document.getElementById("add-form");
 const taskList = document.getElementById("task-list");
 const newTask = document.getElementById("new-task");
-const upper = document.querySelector(".upper");
-
+const upper = document.querySelector("#back-to-top");
+const clearedtask = document.querySelector(".completed-task");
+const cardLi = document.getElementById("task-list");
+const buttonClr = document.getElementById("clear");
 let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+document.addEventListener("DOMContentLoaded", function () {
+  renderTasks();
+  btnClr();
+});
 
 window.onscroll = function () {
   scrollFunction();
@@ -13,38 +20,91 @@ function renderTasks() {
   taskList.innerHTML = "";
 
   tasks.forEach(function (task, index) {
-    let datetime = new Date().toLocaleString();
-
     const li = document.createElement("li");
+    li.setAttribute("id", "list");
     li.innerHTML = `
-    <div class="card">
+    <div class="card" id="${task.id}">
             <span><h1 class="wrap">Title: ${task.title}</h1></span>
             <span><p class="wrap">Desc: ${task.desc}</p></span>
+            <p class="date">${task.date}</p>
     </div>
-            <p class="date">${datetime}</p>
+            <button class="button-completed">        
+              <i class="fa-regular fa-circle-check" index="${index}"></i>
+            </button>
             <div class="wrap-button">
                 <button class="btn-update" data-index="${index}">Update</button>
                 <button class="btn-delete" data-index="${index}">Delete</button>
             </div>
     
         `;
+
     taskList.appendChild(li);
   });
 }
 
-function membuat() {
-  const async = arguments;
+console.log(Array.from(cardLi));
+
+document.addEventListener("click", function (e) {
+  if (e.target.classList.contains("fa-regular")) {
+    const index = e.target.getAttribute("index");
+    tasks[index].setAttribute("style", "text-decoration: line-through");
+  }
+});
+
+form.addEventListener("click", function (e) {
+  e.preventDefault();
+  if (e.target.classList.contains("submit")) {
+    Swal.fire({
+      title: "Add Task",
+      html: `
+    <form id="form-wrap">
+      <label for="swal-input1">Title: </label>
+      <input id="swal-input1" class="swal2-input" >
+      <label for="swal-input2">Desc: </label>
+      <input id="swal-input2" class="swal2-input" >
+    </form>`,
+      showCancelButton: true,
+      confirmButtonText: "Add",
+      cancelButtonText: "Cancel",
+      preConfirm: () => {
+        const title = Swal.getPopup().querySelector("#swal-input1").value;
+        const description = Swal.getPopup().querySelector("#swal-input2").value;
+        if (!title || !description) {
+          Swal.showValidationMessage("Please enter task and desc name");
+        }
+        return { title, description };
+      },
+      allowOutsideClick: () => !Swal.isLoading(),
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const id = generateId();
+        const date = new Date().toLocaleString();
+        const task = {
+          title: result.value.title,
+          desc: result.value.description,
+          date,
+          id,
+        };
+        updateTaskfinish();
+        tasks.push(task);
+        reloadPage();
+        finishTask();
+        localStorage.setItem("tasks", JSON.stringify(tasks));
+        renderTasks();
+      }
+    });
+  }
+});
+
+function reloadPage() {
+  setTimeout(() => {
+    location.reload();
+  }, 1100);
 }
 
-form.addEventListener("submit", function (e) {
-  e.preventDefault();
-  const task = { title: newTask.value, desc: newTask.value };
-  tasks.push(task);
-  finishTask();
-  localStorage.setItem("tasks", JSON.stringify(tasks));
-  renderTasks();
-  newTask.value = "";
-});
+function generateId() {
+  return +new Date();
+}
 
 taskList.addEventListener("click", function (e) {
   if (e.target.classList.contains("btn-delete")) {
@@ -62,12 +122,14 @@ taskList.addEventListener("click", function (e) {
         tasks.splice(index, 1);
         localStorage.setItem("tasks", JSON.stringify(tasks));
         renderTasks();
+        reloadPage();
         Swal.fire("Terhapus!", "Task mu telah terhapus.", "success");
       }
     });
   } else if (e.target.classList.contains("btn-update")) {
     const index = e.target.getAttribute("data-index");
-    console.log(index);
+    let date = new Date().toLocaleString();
+
     const task = tasks[index];
     Swal.fire({
       title: "Update Task",
@@ -87,7 +149,8 @@ taskList.addEventListener("click", function (e) {
         if (!title) {
           Swal.showValidationMessage("Please enter task name");
         }
-        return { title: title, desc: description };
+
+        return { title: title, desc: description, date };
       },
       allowOutsideClick: () => !Swal.isLoading(),
     }).then((result) => {
@@ -95,7 +158,9 @@ taskList.addEventListener("click", function (e) {
         updateTaskfinish();
         tasks[index].title = result.value.title;
         tasks[index].desc = result.value.desc;
+        tasks[index].date = result.value.date;
         localStorage.setItem("tasks", JSON.stringify(tasks));
+        reloadPage();
         renderTasks();
       }
     });
@@ -115,6 +180,7 @@ function clearTasks() {
     if (result.isConfirmed) {
       tasks = [];
       localStorage.removeItem("tasks");
+      reloadPage();
       renderTasks();
       Swal.fire("Terhapus!", "Semua Task mu telah terhapus.", "success");
     }
@@ -155,24 +221,38 @@ function updateTaskfinish() {
 
   Toast.fire({
     icon: "success",
-    title: "list berhasil diubah",
+    title: "list berhasil diupdate",
   });
 }
 
 function scrollFunction() {
-  if (
-    document.body.scrollTop > 300 ||
-    document.documentElement.scrollTop > 300
-  ) {
-    upper.style.display = "block";
+  if (window.pageYOffset > 700) {
+    if (!upper.classList.contains("upperIn")) {
+      upper.classList.remove("upperOut");
+      upper.classList.add("upperIn");
+      upper.style.display = "block";
+    }
   } else {
-    upper.style.display = "none";
+    if (upper.classList.contains("upperIn")) {
+      upper.classList.remove("upperIn");
+      upper.classList.add("upperOut");
+      setTimeout(() => {
+        upper.style.display = "none";
+      }, 250);
+    }
   }
 }
 
 upper.addEventListener("click", () => {
-  window.location.href = "#home";
+  window.scrollTo(0, 0);
 });
 
-renderTasks();
+function btnClr() {
+  if (tasks.length >= 3) {
+    buttonClr.setAttribute("style", "display: block");
+  } else {
+    buttonClr.setAttribute("style", "display: none");
+  }
+}
+
 console.log(tasks);
